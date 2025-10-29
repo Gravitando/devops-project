@@ -1,8 +1,12 @@
-# backend/Dockerfile
 FROM node:22-alpine
-WORKDIR '/app'
-COPY package.json .
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
 RUN npm install
+
 COPY . .
+
 EXPOSE 4000
-CMD ["node", "index.js"]
+
+CMD ["npm", "run", "dev"]  # or your start command

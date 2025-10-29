@@ -1,15 +1,37 @@
-# myApp/docker-compose.yaml
-version: "3.8"
 services:
-  frontend:
-    build: ./frontend
-    container_name: frontend_c
-    ports:
-      - '3000:80'
   backend:
-    build: ./backend
-    container_name: backend_c
+    build:
+      context: ./backend
+
+    container_name: myapp-backend
+    command: npx nodemon server.js
+
     ports:
-      - '4000:4000'
-    stdin_open: true
-    tty: true
+      - "4000:4000"
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/moodApp
+
+
+  mongo:
+    image: mongo:8.0
+    container_name: myapp-mongo
+    
+    ports:
+      - "27018:27017"
+
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: myapp-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+
+volumes:
+  mongo_data:
