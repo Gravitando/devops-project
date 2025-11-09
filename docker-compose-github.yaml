@@ -1,0 +1,32 @@
+services:
+  backend:
+    image: be
+    command: npx nodemon server.js
+
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/moodApp
+
+
+  mongo:
+    image: mongo:8.0
+    container_name: myapp-mongo
+    
+    ports:
+      - "27018:27017"
+
+
+  frontend:
+    image: fe
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+
+volumes:
+  mongo_data:
