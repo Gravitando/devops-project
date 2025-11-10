@@ -1,6 +1,6 @@
 services:
   backend:
-    image: be
+    image: gravitando/dev-ops-backend:latest
     command: npx nodemon server.js
 
     ports:
@@ -21,7 +21,7 @@ services:
 
 
   frontend:
-    image: fe
+    image: gravitando/dev-ops-frontend:latest
     depends_on:
       - backend
     ports:
