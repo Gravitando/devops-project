@@ -31,7 +31,7 @@ function Home({ user }) {
             </div>
             {!user ? (
               <div className="hero-buttons">
-                <Link to="/signup" className="cta-button primary">
+                <Link to="/planner" className="cta-button primary">
                   <span className="button-icon">✅</span>
                   Get Started
                 </Link>
