@@ -1,8 +1,10 @@
-* {
+/* Change this in planner.css */
+.planner-page * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 
 .planner-container {
   min-height: 100vh;
