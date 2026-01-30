@@ -5,24 +5,18 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import TodoList from "./pages/TodoList";
+import Planner from "./pages/Planner";
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/tasks"
-            element={
-              <ProtectedRoute>
-                <TodoList />
-              </ProtectedRoute>
-            }
-          />
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/planner" element={<Planner />} />
+
+        
 
           {/* Any unknown route → go back to Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
