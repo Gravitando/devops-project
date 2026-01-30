@@ -1,0 +1,28 @@
+name: Trigger Jenkins Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-jenkins:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Jenkins job
+        env:
+          JENKINS_ADDR: ${{ vars.JENKINS_ADDR }}
+          JENKINS_PORT: ${{ vars.JENKINS_PORT }}
+          JENKINS_JOB: ${{ vars.JENKINS_JOB }}
+          JENKINS_BUILD_TOKEN: ${{ secrets.JENKINS_BUILD_TOKEN }}
+          JENKINS_USER: ${{ secrets.JENKINS_USER }}
+          JENKINS_API_TOKEN: ${{ secrets.JENKINS_API_TOKEN }}
+        run: |
+          JENKINS_URL=http://$JENKINS_ADDR:$JENKINS_PORT
+          AUTH=$(echo -n "$JENKINS_USER:$JENKINS_API_TOKEN" | base64)
+
+          curl -G \
+            -H "Authorization: Basic $AUTH" \
+            "$JENKINS_URL/job/$JENKINS_JOB/build" \
+            --data-urlencode "token=$JENKINS_BUILD_TOKEN"

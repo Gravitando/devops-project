@@ -1,0 +1,60 @@
+- name: Redeploy Docker containers
+  hosts: app
+  become: false  # assuming you have necessary permissions
+
+  collections:
+    - community.docker
+
+  tasks:
+    # Step 1: Pull the latest Frontend Docker image from Docker Hub
+    - name: Pull latest Frontend Docker image
+      docker_image:
+        name: akira66/devops-project-frontend
+        tag: latest
+        source: pull
+        force_source: true
+
+    # Step 2: Pull the latest Backend Docker image from Docker Hub
+    - name: Pull latest Backend Docker image
+      docker_image:
+        name: akira66/devops-project-backend
+        tag: latest
+        source: pull
+        force_source: true
+
+    # Step 3: Stop and remove the existing frontend container if it exists
+    - name: Stop and remove existing frontend container
+      docker_container:
+        name: devops-fe-container
+        state: absent
+
+    # Step 4: Stop and remove the existing backend container if it exists
+    - name: Stop and remove existing backend container
+      docker_container:
+        name: devops-be-container
+        state: absent
+
+    # Step 5: Run the updated frontend container
+    - name: Run updated frontend container
+      docker_container:
+        name: devops-fe-container
+        image: akira66/devops-project-frontend:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "3000:80"
+
+    # Step 6: Run the updated backend container with environment variables
+    - name: Run updated backend container
+      docker_container:
+        name: devops-be-container
+        image: akira66/devops-project-backend:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "4000:4000"
+        env:
+          JWT_SECRET: yourSuperSecretKey
+          MONGO_URI: mongodb+srv://olithajayasooriya26_db_user:<mongodb+srv://olithajayasooriya26_db_user:abcd123456@cluster0.1jm2hei.mongodb.net/?appName=Cluster0>@cluster0.1jm2hei.mongodb.net/moodApp?appName=Cluster0  # Make sure the MongoDB URI is correct
+          NODE_ENV: development
+          PORT: "4000"

@@ -1,0 +1,87 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+  access_key = "AKIAYXLNFKTZ2GBEXJMV"
+  secret_key = "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"
+}
+
+resource "tls_private_key" "agent_key" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
+resource "aws_key_pair" "agent_keypair" {
+  key_name = "builder_instance_keypair"
+  public_key = tls_private_key.agent_key.public_key_openssh
+}
+
+
+resource "aws_security_group" "ssh" {
+  ingress {
+    protocol = "TCP"
+    from_port = 22
+    to_port = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    protocol = "-1"
+    from_port = 0
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_instance" "builder_instance" {
+  ami           = "ami-0f9c27b471bdcd702" # Debian 13 (HVM), SSD Volume Type, 64-bit
+  instance_type = "t3.micro"
+  key_name      = aws_key_pair.agent_keypair.key_name
+  vpc_security_group_ids = [aws_security_group.ssh.id]
+  subnet_id = "subnet-09dedc6d9d360ae74"
+
+  user_data = <<-EOF
+    #!/bin/bash
+    JENKINS_IP="2600:1f18:6375:4a64:e6cd:eee0:a689:6abc"
+    AGENT_SECRET="a04438fdb256962690da5343225b926cf3ccd9916ad3e58d4fadec7c2e4c7914"
+    apt-get update -y
+    apt-get install -y docker.io openjdk-21-jre
+    usermod -aG docker admin
+    mkdir -p /home/admin/jenkins
+    cd /home/admin/jenkins
+    curl -O http://[$JENKINS_IP]:8080/jnlpJars/agent.jar
+    chown -R admin:admin /home/admin/jenkins
+    su - admin -c "java -jar /home/admin/jenkins/agent.jar \
+      -url http://[$JENKINS_IP]:8080 \
+      -secret $AGENT_SECRET \
+      -name remote-builder \
+      -webSocket \
+      -workDir /home/admin/jenkins &"
+  EOF
+}
+
+output "public_ip" {
+  value = aws_instance.builder_instance.public_ip
+}
+
+output "private_key_pem" {
+  value = tls_private_key.agent_key.private_key_pem
+  sensitive = true
+}
+
+resource "local_file" "agent_private_key" {
+  content = tls_private_key.agent_key.private_key_pem
+  filename = "${path.module}/builder.pem"
+  file_permission = "0600"
+}
