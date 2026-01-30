@@ -2,7 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
+const taskRoutes = require('./routes/tasks');
 
 const app = express();
 app.use(cors());
@@ -57,9 +60,16 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid credentials" });
     }
 
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
     res.json({
       success: true,
       message: "Login successful",
+      token,
       user: { name: user.name, email: user.email }
     });
   } catch (err) {
@@ -76,5 +86,8 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ success: false, message: "Error fetching users" });
   }
 });
+
+// Mount task routes
+app.use('/tasks', taskRoutes);
 
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

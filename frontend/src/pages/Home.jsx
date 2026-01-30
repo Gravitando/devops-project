@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
-function Home({ user }) {
+function Home() {
+  const { user, logout } = useAuth();
+
   return (
     <div className="home-container">
       {/* Hero Section */}
@@ -32,32 +35,32 @@ function Home({ user }) {
             {!user ? (
               <div className="hero-buttons">
                 <Link to="/signup" className="cta-button primary">
-                  <span className="button-icon">✅</span>
+                  <span className="button-icon">+</span>
                   Get Started
                 </Link>
                 <Link to="/login" className="cta-button secondary">
-                  <span className="button-icon">👋</span>
+                  <span className="button-icon">-</span>
                   Welcome Back
                 </Link>
               </div>
             ) : (
               <div className="hero-buttons">
                 <Link to="/tasks" className="cta-button primary">
-                  <span className="button-icon">📝</span>
+                  <span className="button-icon">*</span>
                   View My Tasks
                 </Link>
-                <Link to="/add-task" className="cta-button secondary">
-                  <span className="button-icon">➕</span>
-                  Add New Task
-                </Link>
+                <button onClick={logout} className="cta-button secondary">
+                  <span className="button-icon">x</span>
+                  Logout
+                </button>
               </div>
             )}
           </div>
-          
+
         </div>
       </section>
 
-     
+
     </div>
   );
 }

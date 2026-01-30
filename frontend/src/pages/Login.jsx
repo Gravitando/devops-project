@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
 const Login = () => {
@@ -8,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,10 +21,10 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await axios.post("http://localhost:4000/login", { email, password });
-      alert(res.data.message);
 
       if (res.data.success) {
-        navigate("/diary"); // redirect on success
+        login(res.data.token, res.data.user);
+        navigate("/tasks");
       }
     } catch (err) {
       alert(err.response?.data?.message || "Something went wrong");
@@ -33,12 +35,12 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <h2>Welcome Back </h2>
+      <h2>Welcome Back</h2>
       <p className="subtitle">Login to continue your journey</p>
 
       <form className="auth-form" onSubmit={handleLogin}>
         <label>Email</label>
-        <input 
+        <input
           type="email"
           placeholder="Enter your email"
           value={email}
@@ -47,7 +49,7 @@ const Login = () => {
         />
 
         <label>Password</label>
-        <input 
+        <input
           type="password"
           placeholder="Enter your password"
           value={password}
@@ -61,7 +63,7 @@ const Login = () => {
       </form>
 
       <p className="switch-link">
-        Don’t have an account? <Link to="/signup">Sign up</Link>
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </p>
     </div>
   );

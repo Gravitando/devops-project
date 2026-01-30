@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 4000
 
-CMD ["npm", "run", "dev"]  # or your start command
+CMD ["npm", "run", "dev"]
