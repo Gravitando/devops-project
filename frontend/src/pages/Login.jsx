@@ -20,7 +20,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:4000/login", { email, password });
+      const res = await axios.post("http://52.71.56.61:4000/login", { email, password });
 
       if (res.data.success) {
         login(res.data.token, res.data.user);
