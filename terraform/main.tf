@@ -11,11 +11,7 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = "us-east-1"
-  access_key = "AKIAYXLNFKTZ2GBEXJMV"
-  secret_key = "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"
-}
+
 
 resource "tls_private_key" "agent_key" {
   algorithm = "RSA"
@@ -53,8 +49,6 @@ resource "aws_instance" "builder_instance" {
 
   user_data = <<-EOF
     #!/bin/bash
-    JENKINS_IP="2600:1f18:6375:4a64:e6cd:eee0:a689:6abc"
-    AGENT_SECRET="a04438fdb256962690da5343225b926cf3ccd9916ad3e58d4fadec7c2e4c7914"
     apt-get update -y
     apt-get install -y docker.io openjdk-21-jre
     usermod -aG docker admin
