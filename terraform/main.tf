@@ -11,12 +11,11 @@ terraform {
   }
 }
 
-
-
 resource "tls_private_key" "agent_key" {
   algorithm = "RSA"
   rsa_bits = 4096
 }
+
 
 resource "aws_key_pair" "agent_keypair" {
   key_name = "builder_instance_keypair"
