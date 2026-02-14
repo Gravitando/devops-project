@@ -35,7 +35,7 @@ const Signup = () => {
   return (
     <div className="auth-container">
       <h2>Create Account </h2>
-      <p className="subtitle">Join us and start your diary journeyyyy</p>
+      <p className="subtitle">Join us and start your diary journey</p>
 
       <form className="auth-form" onSubmit={handleSignup}>
         <label>Name</label>
