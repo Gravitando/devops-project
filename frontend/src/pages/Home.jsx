@@ -13,7 +13,7 @@ function Home() {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              Hi Welcome to <span className="brand-highlight">TaskMate</span>
+              Olitha Jayasooriya <span className="brand-highlight">TaskMate</span>
             </h1>
             <p className="hero-subtitle">
               Stay organized, boost productivity, and never miss a deadline with your smart to-do list companion.
